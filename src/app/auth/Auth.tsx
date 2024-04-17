@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { TextInput, View, Text, TouchableWithoutFeedback, Keyboard, TouchableOpacity, StyleSheet } from "react-native";
 import useSignIn from "../../hooks/useSignIn";
 import Loader from "../components/ui/Loader";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../state/RecoilState";
+import { IUser } from "../../types/Types";
 
 export default function Auth() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isDisabled, setIsDisabled] = useState(true);
-    const { signIn, errorMessage, isLoading } = useSignIn();
+    const [errorMessage, setErrorMessage] = useState('')
+    const { signIn, isLoading } = useSignIn();
+    const [user, setUser] = useRecoilState<IUser>(userAtom)
 
     const validationEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -19,9 +24,10 @@ export default function Auth() {
 
     async function login() {
         try {
-            await signIn(email, password);
+            const userInfo = await signIn(email, password);
+            setUser(userInfo);
         } catch (error) {
-            console.log(error)
+            setErrorMessage((error as Error).message);
         }
     }
 

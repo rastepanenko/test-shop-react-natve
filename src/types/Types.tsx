@@ -9,13 +9,12 @@ export interface IUser {
 }
 
 export interface ISignInProvider {
-    readonly signIn: (email: string, password: string) => Promise<void>,
-    readonly errorMessage: string,
+    readonly signIn: (email: string, password: string) => Promise<IUser>,
     readonly isLoading: boolean,
 }
 
 export interface ISignOutProvider {
-    readonly signOut: () => Promise<void>,
+    readonly signOut: () => Promise<IUser>,
     readonly errorMessage: string,
     readonly isLoading: boolean,
 }
@@ -23,7 +22,6 @@ export interface ISignOutProvider {
 export interface IProductsProvider {
     readonly getProducts: () => Promise<IProduct[]>,
     readonly products: IProduct[],
-    readonly errorMessage: string,
     readonly isLoading: boolean,
 }
 
@@ -77,7 +75,7 @@ export interface ICardData {
 }
 
 export interface IOrderProvider {
-    readonly orderWithCard: (orderInfo: IOrderInfo) => Promise<IOrder>;
-    readonly orderWithCash: (orderInfo: IOrderInfo) => Promise<IOrder>;
+    readonly orderWithCard: (orderInfo: IOrderInfo) => Promise<IOrder[]>;
+    readonly orderWithCash: (orderInfo: IOrderInfo) => Promise<IOrder[]>;
     readonly isLoading: boolean;
 }

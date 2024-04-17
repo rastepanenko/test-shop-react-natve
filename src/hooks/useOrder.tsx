@@ -12,70 +12,65 @@ export default function useOrder() {
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
     let order = null;
-    let orders: IOrder[] = user.orders; 
+    let orders: IOrder[] = user.orders;
 
     const orderWithCard = async (orderInfo: IOrderInfo) => {
         setIsLoading(true);
-        try {
-            return new Promise(resolve => setTimeout(() => {
-                order = {
-                    totalPrice: orderPrice,
-                    paymentStatus: true,
-                    adress: orderInfo.adress,
-                    name: orderInfo.name,
-                    phone: orderInfo.phone,
-                    date: new Date,
-                    products: cart
-                } as IOrder;
+        return new Promise<IOrder[]>((resolve, reject) => setTimeout(() => {
+            order = {
+                totalPrice: orderPrice,
+                paymentStatus: true,
+                adress: orderInfo.adress,
+                name: orderInfo.name,
+                phone: orderInfo.phone,
+                date: new Date,
+                products: cart
+            } as IOrder;
 
-                if (
-                    orderInfo.cardNumber.toLowerCase().trim() === PaymentCardData.cardNumber.toLowerCase().trim()
-                    && orderInfo.cardExpiry.toLowerCase().trim() === PaymentCardData.cardDate.toLowerCase().trim()
-                    && Number(orderInfo.cvc) === PaymentCardData.cvv) {
-                    
-                    orders = [order, ...orders];
-                    setUser({ ...user, orders: orders })
-                    setCart([]);
-                    setIsLoading(false);
-                    //@ts-ignore
-                    navigation.navigate('Orders')
-                    return resolve(orderInfo);
-                } else {
-                    alert('Invalid card details!');
-                    //@ts-ignore
-                    navigation.navigate('Root');
-                }
-            }, 1000))
-        } catch (error) {
-            console.error(error);
-        }
+            if (
+                orderInfo.cardNumber.toLowerCase().trim() === PaymentCardData.cardNumber.toLowerCase().trim() &&
+                orderInfo.cardExpiry.toLowerCase().trim() === PaymentCardData.cardDate.toLowerCase().trim() &&
+                Number(orderInfo.cvc) === PaymentCardData.cvv
+            ) {
+
+                orders = [order, ...orders];
+                // setUser({ ...user, orders: orders })
+                // setCart([]);
+                setIsLoading(false);
+                //@ts-ignore
+                // navigation.navigate('Orders')
+                return resolve(orders);
+            } else {
+                setIsLoading(false);
+                return reject({ message: 'Invalid card details!' })
+                // alert('Invalid card details!');
+                // //@ts-ignore
+                // navigation.navigate('Root');
+            }
+        }, 1000))
     };
 
     const orderWithCash = async (orderInfo: IOrderInfo) => {
         setIsLoading(true);
-        try {
-            return new Promise(resolve => setTimeout(() => {
-                order = {
-                    totalPrice: orderPrice,
-                    paymentStatus: false,
-                    adress: orderInfo.adress,
-                    name: orderInfo.name,
-                    phone: orderInfo.phone,
-                    date: new Date,
-                    products: cart
-                } as IOrder;
+        return new Promise(resolve => setTimeout(() => {
+            order = {
+                totalPrice: orderPrice,
+                paymentStatus: false,
+                adress: orderInfo.adress,
+                name: orderInfo.name,
+                phone: orderInfo.phone,
+                date: new Date,
+                products: cart
+            } as IOrder;
 
-                orders = [order, ...orders];
-                setUser({ ...user, orders: orders })
-                setCart([]);
-                setIsLoading(false);
-                //@ts-ignore
-                navigation.navigate('Orders')
-                return resolve(order);
-            }, 1000))
-        } catch (error) {
-            console.error(error);
-        }
+            orders = [order, ...orders];
+            // setUser({ ...user, orders: orders })
+            // setCart([]);
+            // setIsLoading(false);
+            // //@ts-ignore
+            // navigation.navigate('Orders')
+            return resolve(orders);
+        }, 1000))
     };
 
     return {

@@ -7,6 +7,8 @@ import { IOrderInfo } from "../../types/Types";
 import useOrder from "../../hooks/useOrder";
 import Loader from "../components/ui/Loader";
 import { useNavigation } from "@react-navigation/native";
+import { useRecoilState } from "recoil";
+import { cartAtom, userAtom } from "../../state/RecoilState";
 
 export default function Order() {
     const {
@@ -25,6 +27,9 @@ export default function Order() {
     const [checked, setChecked] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [paymentFieldsReady, setPaymentFieldsReady] = useState(false);
+    const [user, setUser] = useRecoilState(userAtom);
+    const [cart, setCart] = useRecoilState(cartAtom);
+    const navigation = useNavigation();
 
     useEffect(() => {
         if ((orderInfo.name && orderInfo.adress && orderInfo.phone && paymentFieldsReady && checked == 'card') || (orderInfo.name && orderInfo.adress && orderInfo.phone && checked == 'cash')) {
@@ -34,11 +39,27 @@ export default function Order() {
         }
     }, [orderInfo, paymentFieldsReady, checked]);
 
-    const onSubmit = () => {
-        if (checked === 'cash') {
-            orderWithCash(orderInfo);
+    const onSubmit = async () => {
+        if (checked === 'card') {
+            try {
+                let orders = await orderWithCard(orderInfo);
+                setUser({ ...user, orders: orders })
+                setCart([]);
+                //@ts-ignore
+                navigation.navigate('Orders');
+            } catch(error) {
+                alert((error as Error).message);
+            }
+            
         } else {
-            orderWithCard(orderInfo);
+            try {
+                let orders = await orderWithCash(orderInfo);
+                setUser({ ...user, orders: orders })
+                setCart([]);
+            } catch(error) {
+                console.log(error);
+            }
+            
         }
     }
 

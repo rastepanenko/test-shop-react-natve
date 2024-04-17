@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { userAtom } from "../../state/RecoilState";
 import useSignOut from "../../hooks/useSignOut";
 import Loader from "../components/ui/Loader";
@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Profile() {
-    const user = useRecoilValue(userAtom);
+    const [user, setUser] = useRecoilState(userAtom);
     const {
         signOut,
         isLoading,
@@ -23,6 +23,15 @@ export default function Profile() {
             <Loader size={100} color={'black'} />
         </View>
     }
+
+    const quit = async () => {
+        try {
+            const userInfo = await signOut();
+            setUser(userInfo);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <View style={styles.container}>

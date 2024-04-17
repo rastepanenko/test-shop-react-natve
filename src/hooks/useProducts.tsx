@@ -5,34 +5,26 @@ import { catalog } from "../mock/Products";
 export default function useProducts() {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     const [products, setProducts] = useState<IProduct[]>()
-    
+
     const getProducts = async () => {
         setIsLoading(true);
-        try {
-            return new Promise(resolve => setTimeout(() => {
-            
-            setProducts(catalog.products)
+        return new Promise(resolve => setTimeout(() => {
             setIsLoading(false);
             return resolve(catalog.products);
-            }, 1000))
-        } catch (error) {
-            console.error(error);
-            setErrorMessage('Error loading catalog. Try again later')
-        }
+        }, 1000))
     };
 
     useEffect(() => {
         (async () => {
-            await getProducts();
+            const products = await getProducts();
+            setProducts(catalog.products);
         })();
     }, [])
 
     return {
         getProducts,
         products,
-        errorMessage,
         isLoading,
     } as IProductsProvider
 }
