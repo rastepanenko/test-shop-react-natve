@@ -1,20 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { RecoilRoot } from 'recoil';
+import { Navigation } from './src/Navigation';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React from 'react';
+import { Text } from 'react-native';
 
-export default function App() {
+export default function AppRecoilWrapper() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <React.Suspense fallback={<Text>Loading</Text>}>
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>
+    </React.Suspense>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export function App() {
+  return (
+    <SafeAreaProvider style={{ flex: 1 }}>
+      <Navigation />
+    </SafeAreaProvider>
+  );
+}
