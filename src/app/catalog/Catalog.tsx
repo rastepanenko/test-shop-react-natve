@@ -13,7 +13,6 @@ export default function Catalog() {
     const {
         getProducts,
         products,
-        errorMessage,
         isLoading,
     } = useProducts();
     const [tags, setTags] = useState(initialTags);
